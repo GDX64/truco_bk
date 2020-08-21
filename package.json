@@ -1,0 +1,30 @@
+{
+  "name": "truco_bk",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dist/index.js",
+    "dev": "nodemon src/index.ts",
+    "build": "tsc -p ."
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.17.7",
+    "@types/lodash": "^4.14.159",
+    "@types/node": "^14.0.27",
+    "@types/socket.io": "^2.1.10",
+    "@types/ws": "^7.2.6",
+    "express": "^4.17.1",
+    "lodash": "^4.17.20",
+    "socket.io": "^2.3.0",
+    "ws": "^7.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7"
+  }
+}
