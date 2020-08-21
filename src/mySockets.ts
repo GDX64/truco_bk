@@ -122,6 +122,9 @@ export default function init(server: HttpServer) {
 
         socket.on('disconnect', () => {
             if (allUsers[socket.id]) {
+                const player = allUsers[socket.id]
+                player.room.people = player.room.people.filter(thisPlayer => thisPlayer != player)
+                player.notifyMe(socket, true, `${player.name} left the room`)
                 console.log(allUsers[socket.id].name, 'has left the room')
                 delete allUsers[socket.id]
             }
@@ -130,7 +133,7 @@ export default function init(server: HttpServer) {
         socket.on('playRound', data => {
             const player = allUsers[socket.id]
 
-            if (player.room.people.length > 4) {
+            if (player.room.people.length < 2) {
                 return
             }
 
