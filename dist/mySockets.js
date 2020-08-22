@@ -58,11 +58,22 @@ class Room {
 }
 const allUsers = {};
 const rooms = {
-    testRoom: new Room('testRoom'),
     room1: new Room('room1'),
     room2: new Room('room2'),
     room3: new Room('room3'),
+    room4: new Room('room4'),
+    room5: new Room('room5'),
 };
+function disconnectMe(socket) {
+    if (allUsers[socket.id]) {
+        const player = allUsers[socket.id];
+        player.room.people = player.room.people.filter(thisPlayer => thisPlayer != player);
+        player.notifyMe(socket, true, `${player.name} left the room`);
+        socket.leave(player.room.name);
+        console.log(allUsers[socket.id].name, 'has left the room');
+        delete allUsers[socket.id];
+    }
+}
 function init(server) {
     const io = socket_io_1.default(server);
     io.on('connect', (socket) => {
@@ -76,6 +87,11 @@ function init(server) {
                 socket.emit('InfoError', { message: 'no room with this name' });
                 return;
             }
+            if (rooms[data.room].people.length >= 4) {
+                socket.emit('InfoError', { message: 'The room is full' });
+                return;
+            }
+            disconnectMe(socket);
             const player = new Player(data.name, socket.id, rooms[data.room]);
             allUsers[socket.id] = player;
             player.setHand();
@@ -87,13 +103,7 @@ function init(server) {
             console.log(`User ${data.name} entered the test room`);
         });
         socket.on('disconnect', () => {
-            if (allUsers[socket.id]) {
-                const player = allUsers[socket.id];
-                player.room.people = player.room.people.filter(thisPlayer => thisPlayer != player);
-                player.notifyMe(socket, true, `${player.name} left the room`);
-                console.log(allUsers[socket.id].name, 'has left the room');
-                delete allUsers[socket.id];
-            }
+            disconnectMe(socket);
         });
         socket.on('playRound', data => {
             const player = allUsers[socket.id];
